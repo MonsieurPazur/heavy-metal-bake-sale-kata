@@ -206,5 +206,15 @@ class BakeSaleTest extends TestCase
                 'change' => '0.35'
             ]
         ];
+        yield 'not enough cash' => [
+            'input' => [
+                'items' => 'W',
+                'payment' => '1.25'
+            ],
+            'output' => [
+                'total' => '1.50',
+                'change' => 'Not enough money.'
+            ]
+        ];
     }
 }

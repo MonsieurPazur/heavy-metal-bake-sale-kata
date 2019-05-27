@@ -125,7 +125,11 @@ class BakeSale
      */
     public function printChange(): void
     {
-        $this->output->print($this->getFormattedPrice($this->change));
+        if ($this->change < 0) {
+            $this->output->print('Not enough money.');
+        } else {
+            $this->output->print($this->getFormattedPrice($this->change));
+        }
     }
 
     /**
