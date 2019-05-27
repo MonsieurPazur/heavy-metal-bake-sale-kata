@@ -8,6 +8,7 @@ namespace Test;
 
 use App\BakeSale;
 use App\InputInterface;
+use App\OutputInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -25,6 +26,11 @@ class BakeSaleTest extends TestCase
     private $input;
 
     /**
+     * @var MockObject|OutputInterface $output way of presenting output data from application
+     */
+    private $output;
+
+    /**
      * @var BakeSale $bakeSale main application
      */
     private $bakeSale;
@@ -40,7 +46,11 @@ class BakeSaleTest extends TestCase
             ->setMethods(['get'])
             ->getMock();
 
-        $this->bakeSale = new BakeSale($this->input);
+        $this->output = $this->getMockBuilder(OutputInterface::class)
+            ->setMethods(['print'])
+            ->getMock();
+
+        $this->bakeSale = new BakeSale($this->input, $this->output);
     }
 
     /**
@@ -52,5 +62,11 @@ class BakeSaleTest extends TestCase
             ->method('get')
             ->willReturn('B');
         $this->bakeSale->addItems();
+
+        $this->output->expects($this->once())
+            ->method('print')
+            ->with($this->equalTo(0.65));
+
+        $this->bakeSale->printTotal();
     }
 }
