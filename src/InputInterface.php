@@ -18,5 +18,6 @@ interface InputInterface
      *
      * @return string comma separated purchases
      */
-    public function get(): string;
+//    public function get(): string;
+    public function get();
 }
