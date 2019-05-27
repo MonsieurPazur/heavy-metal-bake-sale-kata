@@ -14,6 +14,16 @@ namespace App;
 class BakeSale
 {
     /**
+     * @var array available items with cost
+     */
+    private const ITEMS = [
+        'B' => 0.65,
+        'M' => 1.00,
+        'C' => 1.35,
+        'W' => 1.50
+    ];
+
+    /**
      * @var InputInterface $input way of getting data into application
      */
     private $input;
@@ -22,6 +32,11 @@ class BakeSale
      * @var OutputInterface $output way of printing data outside
      */
     private $output;
+
+    /**
+     * @var float $totalPrice total cost form items from single purchase
+     */
+    private $totalPrice;
 
     /**
      * BakeSale constructor.
@@ -33,6 +48,8 @@ class BakeSale
     {
         $this->input = $input;
         $this->output = $output;
+
+        $this->totalPrice = 0.00;
     }
 
     /**
@@ -40,11 +57,25 @@ class BakeSale
      */
     public function addItems(): void
     {
-        $this->input->get();
+        $input = $this->input->get();
+        $this->totalPrice += self::ITEMS[$input];
     }
 
+    /**
+     * Prints total price to specified output.
+     */
     public function printTotal(): void
     {
-        $this->output->print(0.65);
+        $this->output->print($this->getFormattedPrice());
+    }
+
+    /**
+     * Returns formatted total price as string.
+     *
+     * @return string formatted total price
+     */
+    private function getFormattedPrice(): string
+    {
+        return number_format($this->totalPrice, 2, '.', '');
     }
 }

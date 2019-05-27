@@ -9,6 +9,7 @@ namespace Test;
 use App\BakeSale;
 use App\InputInterface;
 use App\OutputInterface;
+use Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -54,19 +55,41 @@ class BakeSaleTest extends TestCase
     }
 
     /**
-     * Tests inputing items to purchase.
+     * Tests calculating total purchase price based on given input.
+     *
+     * @dataProvider itemsProvider
+     *
+     * @param string $input
+     * @param string $expected
      */
-    public function testInput(): void
+    public function testCalculatingTotalPrice(string $input, string $expected): void
     {
         $this->input->expects($this->once())
             ->method('get')
-            ->willReturn('B');
+            ->willReturn($input);
         $this->bakeSale->addItems();
 
         $this->output->expects($this->once())
             ->method('print')
-            ->with($this->equalTo(0.65));
+            ->with($this->equalTo($expected));
 
         $this->bakeSale->printTotal();
+    }
+
+    /**
+     * Provides data for further calculating.
+     *
+     * @return Generator
+     */
+    public function itemsProvider(): Generator
+    {
+        yield 'brownie' => [
+            'input' => 'B',
+            'expected' => '0.65'
+        ];
+        yield 'muffin' => [
+            'input' => 'M',
+            'expected' => '1.00'
+        ];
     }
 }
