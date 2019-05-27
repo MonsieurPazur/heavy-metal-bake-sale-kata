@@ -56,6 +56,11 @@ class BakeSale
     private $totalPrice;
 
     /**
+     * @var float $change what's left from payment
+     */
+    private $change;
+
+    /**
      * @var bool $outOfStock true if at least one item cannot be purchased due to lack of quantity
      */
     private $outOfStock;
@@ -102,18 +107,37 @@ class BakeSale
         if ($this->outOfStock) {
             $this->output->print('Not enough stock.');
         } else {
-            $this->output->print($this->getFormattedPrice());
+            $this->output->print($this->getFormattedPrice($this->totalPrice));
         }
     }
 
     /**
-     * Returns formatted total price as string.
-     *
-     * @return string formatted total price
+     * Adds payment for this purchase.
      */
-    private function getFormattedPrice(): string
+    public function addPayment(): void
     {
-        return number_format($this->totalPrice, 2, '.', '');
+        $payment = (float)$this->input->get();
+        $this->change = $payment - $this->totalPrice;
+    }
+
+    /**
+     * Prints amount of change left from payment.
+     */
+    public function printChange(): void
+    {
+        $this->output->print($this->getFormattedPrice($this->change));
+    }
+
+    /**
+     * Returns formatted price as a string.
+     *
+     * @param float $price price to format
+     *
+     * @return string formatted price
+     */
+    private function getFormattedPrice(float $price): string
+    {
+        return number_format($price, 2, '.', '');
     }
 
     /**

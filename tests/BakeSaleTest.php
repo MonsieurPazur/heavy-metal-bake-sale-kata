@@ -86,7 +86,7 @@ class BakeSaleTest extends TestCase
      */
     public function testMultiplePurchases(array $input, string $expected): void
     {
-        $this->input
+        $this->input->expects($this->exactly(count($input)))
             ->method('get')
             ->willReturnOnConsecutiveCalls(...$input);
 
@@ -98,6 +98,44 @@ class BakeSaleTest extends TestCase
             ->method('print')
             ->with($this->equalTo($expected));
         $this->bakeSale->printTotal();
+    }
+
+    /**
+     * Tests whole purchase process, from choosing items to returning change.
+     *
+     * @dataProvider completeInteractionProvider
+     *
+     * @param array $input
+     * @param array $output
+     */
+    public function testPayingForItems(array $input, array $output): void
+    {
+        // Setting expectations.
+        // First - choosing items.
+        $this->input->expects($this->at(0))
+            ->method('get')
+            ->willReturn($input['items']);
+
+        // Returning total for those items.
+        $this->output->expects($this->at(0))
+            ->method('print')
+            ->with($this->equalTo($output['total']));
+
+        // Paying for them.
+        $this->input->expects($this->at(1))
+            ->method('get')
+            ->willReturn($input['payment']);
+
+        // Returning change.
+        $this->output->expects($this->at(1))
+            ->method('print')
+            ->with($this->equalTo($output['change']));
+
+        // Whole process in BakeSale.
+        $this->bakeSale->addItems();
+        $this->bakeSale->printTotal();
+        $this->bakeSale->addPayment();
+        $this->bakeSale->printChange();
     }
 
     /**
@@ -141,33 +179,32 @@ class BakeSaleTest extends TestCase
         ];
         yield 'not enough stock' => [
             'input' => [
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
-                'C',
+                'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',
+                'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',
+                'C', 'C', 'C', 'C', 'C',
             ],
             'expected' => 'Not enough stock.'
+        ];
+    }
+
+    /**
+     * Provides data for whole purchase process (from choosing items to returning change).
+     * Input - items then payment value.
+     * Output - total price then change.
+     *
+     * @return Generator
+     */
+    public function completeInteractionProvider(): Generator
+    {
+        yield 'simple interaction' => [
+            'input' => [
+                'items' => 'W,M,C',
+                'payment' => '4.20'
+            ],
+            'output' => [
+                'total' => '3.85',
+                'change' => '0.35'
+            ]
         ];
     }
 }
