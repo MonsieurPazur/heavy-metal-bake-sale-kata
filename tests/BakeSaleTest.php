@@ -139,5 +139,35 @@ class BakeSaleTest extends TestCase
             ],
             'expected' => '3.50'
         ];
+        yield 'not enough stock' => [
+            'input' => [
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+                'C',
+            ],
+            'expected' => 'Not enough stock.'
+        ];
     }
 }
