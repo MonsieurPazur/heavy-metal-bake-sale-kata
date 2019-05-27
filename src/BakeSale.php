@@ -57,8 +57,10 @@ class BakeSale
      */
     public function addItems(): void
     {
-        $input = $this->input->get();
-        $this->totalPrice += self::ITEMS[$input];
+        $input = explode(',', $this->input->get());
+        foreach ($input as $item) {
+            $this->totalPrice += self::ITEMS[$item];
+        }
     }
 
     /**

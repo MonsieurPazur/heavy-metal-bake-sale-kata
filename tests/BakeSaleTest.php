@@ -91,5 +91,9 @@ class BakeSaleTest extends TestCase
             'input' => 'M',
             'expected' => '1.00'
         ];
+        yield 'multiple items' => [
+            'input' => 'B,C,W',
+            'expected' => '3.50'
+        ];
     }
 }
